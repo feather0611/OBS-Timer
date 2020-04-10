@@ -1,4 +1,4 @@
-# OBS multi-function clock
+# OBS Timer
 
 ## 概覽 Overview
 這是寫來用在OBS(或Streamlabs OBS)的簡易時鐘，具有倒數計時的功能，基於[moment.js](https://momentjs.com/)及[SAM大](https://github.com/sam0737)的[作品](https://gist.github.com/sam0737/a0ee8ca253fc5c84b2aa2ac018f7b8ad)，使用時無須安裝任何插件，僅需利用瀏覽器來源便可達成，可透過Query調整模式、樣式。
