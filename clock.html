@@ -67,21 +67,33 @@
 		if (setSec<10) setSec="0"+setSec;
 		output.innerText = setHour+":"+setMin+":"+setSec;
 	}
-	function countDown(time){
+	function showMessage(msg){
+		output.innerText = msg;
+	}
+	function countDown(time, msg){
 		var count;
-		timer = setInterval(
+		if (time==0) return 0;
+		timer1 = setInterval(
 					count = function(){
 						time--;
 						showRegTime(time);
-						if (time==0) clearInterval(timer);
+						if (time==0) {
+							clearInterval(timer1);
+							if (msg) {
+								showMessage(msg);
+							} 
 						}
+					}
 					,1000);
 	}
-	if (urlParams["function"]) {
-		var func = urlParams["function"];
-		switch(func){
-			case 'countdown' :{
-				countDown(getSetTime());
+	if (urlParams["mode"]) {
+		var mode = urlParams["mode"];
+		switch(mode){
+			case 'timer' :{
+				if (urlParams['msg']) {
+					countDown(getSetTime(),urlParams['msg']);
+				}
+				else countDown(getSetTime());
 				break;
 			}
 			default :{
