@@ -8,15 +8,13 @@
 
 <body translate="no">
 	<div id="output"></div>
-	<p id="year"></p>
-	<p id="showURL"></p>
-
+	<p id="debug"></p>
 </body>
 
 <script type="text/javascript">
 	//base on https://gist.github.com/sam0737/a0ee8ca253fc5c84b2aa2ac018f7b8ad
 	//RegEx from here
-	var urlParams;
+	var urlParams, timer;
 	(function () {
     	var match,
       	 	pl     = /\+/g,  // Regex for replacing addition symbol with a space
@@ -34,9 +32,7 @@
 		var URL = window.location.search.substring(1);
 		document.getElementById("showURL").innerHTML=URL;
 	}
-	/*function showClock(){
-    	output.innerText = moment().format(urlParams["format"] || '');
-	}*/
+
 	function showClock(){
 		var c;
 		setInterval(
@@ -46,29 +42,46 @@
 			}
 		, 500);
 	}
-	function countDown(){
-		var setTime, setHour, setMin, setSec;
+
+	function getSetTime(){
+		var setTime;
 		if (urlParams["time"]) {
 			setTime=urlParams["time"];
 		}
 		else{
-			if (urlParams["hour"]) setHour=urlParams["hour"];
-			else setHour=0;
-			if (urlParams["min"]) setMin=urlParams["min"];
-			else setMin=0;
-			if (urlParams["sec"]) setSec=urlParams["sec"];
-			else setSec=0;
+			setTime=0;
+			if (urlParams["hour"]) setTime+=(Number(urlParams["hour"])*3600);
+			if (urlParams["min"])  setTime+=(Number(urlParams["min"])*60);
+			if (urlParams["sec"])  setTime+=Number(urlParams["sec"]);
 		}
+		showRegTime(setTime);
+		return setTime;
+	}
+	function showRegTime(time){
+		var setHour, setMin, setSec;
+		setHour=Math.floor(time/3600);
+		if (setHour<10) setHour="0"+setHour;
+		setMin=Math.floor(Math.floor(time/60)%60);
+		if (setMin<10) setMin="0"+setMin;
+		setSec=time%60;
+		if (setSec<10) setSec="0"+setSec;
 		output.innerText = setHour+":"+setMin+":"+setSec;
 	}
-			
-	var showClock;
-	
+	function countDown(time){
+		var count;
+		timer = setInterval(
+					count = function(){
+						time--;
+						showRegTime(time);
+						if (time==0) clearInterval(timer);
+						}
+					,1000);
+	}
 	if (urlParams["function"]) {
 		var func = urlParams["function"];
 		switch(func){
 			case 'countdown' :{
-				countDown();
+				countDown(getSetTime());
 				break;
 			}
 			default :{
@@ -77,12 +90,8 @@
 			}
 		}	
 	}
-	else {showClock();}
-
-    function showYear(){
-
-        var myYear=new Date().getFullYear(); 
-        document.getElementById("year").innerHTML=myYear;
-    }
+	else showClock();
+	if (urlParams["style"]) output.setAttribute("style", urlParams["style"]);
+	if (urlParams["bodyStyle"]) document.body.setAttribute("style", urlParams["bodyStyle"]);
 </script>
 </html>
