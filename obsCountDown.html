@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>CountDown With OBS</title>
+	<meta charset="utf-8">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+</head>
+
+<body translate="no">
+	<div id="output"></div>
+	<p id="year"></p>
+	<p id="showURL"></p>
+
+</body>
+
+<script type="text/javascript">
+	//base on https://gist.github.com/sam0737/a0ee8ca253fc5c84b2aa2ac018f7b8ad
+	//RegEx from here
+	var urlParams;
+	(function () {
+    	var match,
+      	 	pl     = /\+/g,  // Regex for replacing addition symbol with a space
+      	 	search = /([^&=]+)=?([^&]*)/g,
+      	 	decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
+       		query  = window.location.search.substring(1);
+		urlParams = {};
+
+    	while (match = search.exec(query))
+    		urlParams[decode(match[1])] = decode(match[2]);
+	})();
+	//RegEx end
+	var output=document.getElementById("output");
+	function getURL(){
+		var URL = window.location.search.substring(1);
+		document.getElementById("showURL").innerHTML=URL;
+	}
+	/*function showClock(){
+    	output.innerText = moment().format(urlParams["format"] || '');
+	}*/
+	function showClock(){
+		var c;
+		setInterval(
+		c = function() {
+    				output.innerText = moment().format(urlParams["format"] || '');
+
+			}
+		, 500);
+	}
+	function countDown(){
+		var setTime, setHour, setMin, setSec;
+		if (urlParams["time"]) {
+			setTime=urlParams["time"];
+		}
+		else{
+			if (urlParams["hour"]) setHour=urlParams["hour"];
+			else setHour=0;
+			if (urlParams["min"]) setMin=urlParams["min"];
+			else setMin=0;
+			if (urlParams["sec"]) setSec=urlParams["sec"];
+			else setSec=0;
+		}
+		output.innerText = setHour+":"+setMin+":"+setSec;
+	}
+			
+	var showClock;
+	
+	if (urlParams["function"]) {
+		var func = urlParams["function"];
+		switch(func){
+			case 'countdown' :{
+				countDown();
+				break;
+			}
+			default :{
+				showClock();
+				break;
+			}
+		}	
+	}
+	else {showClock();}
+
+    function showYear(){
+
+        var myYear=new Date().getFullYear(); 
+        document.getElementById("year").innerHTML=myYear;
+    }
+</script>
+</html>
